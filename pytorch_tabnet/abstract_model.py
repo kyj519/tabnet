@@ -527,6 +527,7 @@ class TabModel(BaseEstimator):
         output, M_loss = self.network(X)
 
         loss = self.compute_loss(output, y)
+        print(loss)
         print(loss.shape)
         # Add the overall sparsity loss
         loss = loss - self.lambda_sparse * M_loss
