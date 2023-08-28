@@ -37,7 +37,7 @@ import zipfile
 import warnings
 import copy
 import scipy
-
+from tqdm import tqdm
 
 @dataclass
 class TabModel(BaseEstimator):
@@ -483,7 +483,7 @@ class TabModel(BaseEstimator):
         """
         self.network.train()
 
-        for batch_idx, (X, y) in enumerate(train_loader):
+        for batch_idx, (X, y) in tqdm(enumerate(train_loader)):
             self._callback_container.on_batch_begin(batch_idx)
 
             batch_logs = self._train_batch(X, y)
@@ -527,6 +527,7 @@ class TabModel(BaseEstimator):
         output, M_loss = self.network(X)
 
         loss = self.compute_loss(output, y)
+        print(loss.shape)
         # Add the overall sparsity loss
         loss = loss - self.lambda_sparse * M_loss
 
