@@ -483,7 +483,8 @@ class TabModel(BaseEstimator):
         """
         self.network.train()
         progressBar = tqdm(enumerate(train_loader),
-                           ascii=' =')
+                           ascii=' =',
+                           total=len(train_loader))
 
         for batch_idx, (X, y) in progressBar:
             self._callback_container.on_batch_begin(batch_idx)
