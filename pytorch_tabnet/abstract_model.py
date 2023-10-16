@@ -482,14 +482,16 @@ class TabModel(BaseEstimator):
             DataLoader with train set
         """
         self.network.train()
+        progressBar = tqdm(enumerate(train_loader),
+                           ascii=' =')
 
-        for batch_idx, (X, y) in tqdm(enumerate(train_loader)):
+        for batch_idx, (X, y) in progressBar:
             self._callback_container.on_batch_begin(batch_idx)
 
             batch_logs = self._train_batch(X, y)
 
             self._callback_container.on_batch_end(batch_idx, batch_logs)
-
+        progressBar.close()
         epoch_logs = {"lr": self._optimizer.param_groups[-1]["lr"]}
         self.history.epoch_metrics.update(epoch_logs)
 
