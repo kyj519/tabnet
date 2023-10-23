@@ -197,6 +197,7 @@ def create_dataloaders(
     need_shuffle, sampler = create_sampler(weights, y_train)
     #YJ this weight will not used here. should set as 0
     if train_weight is None:
+        print("in create_dataloaders w_train is None")
         if scipy.sparse.issparse(X_train):
             train_dataloader = DataLoader(
                 SparseTorchDataset(X_train.astype(np.float32), y_train),
