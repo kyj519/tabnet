@@ -219,6 +219,8 @@ def create_dataloaders(
                 pin_memory=pin_memory,
             )
     else:
+        print("in create_dataloaders w_train is not None")
+
         if scipy.sparse.issparse(X_train):
             train_dataloader = DataLoader(
                 SparseTorchDataset(X_train.astype(np.float32), y_train, train_weight),
@@ -242,6 +244,7 @@ def create_dataloaders(
 
     valid_dataloaders = []
     if len(eval_set[0]) == 2:
+        print("eval set has shape of 2")
         #is validation set doesn't have weight inside it
         for X, y in eval_set:
             if scipy.sparse.issparse(X):

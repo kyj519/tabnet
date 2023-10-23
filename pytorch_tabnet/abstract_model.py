@@ -230,6 +230,7 @@ class TabModel(BaseEstimator):
         eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
         print(f"in fit w_train is {w_train}")
         if w_train is None:
+            print("call _construct_loader with None weight set")
             train_dataloader, valid_dataloaders = self._construct_loaders(
                 X_train, y_train, eval_set
             )
