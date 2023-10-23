@@ -200,6 +200,8 @@ def create_dataloaders(
         print("in create_dataloaders w_train is None")
         print(f"x_train is {X_train}")
         print(f"y_train is {y_train}")
+        print(f"x_train is {type(X_train)}")
+        print(f"y_train is {type(y_train)}")
 
         if scipy.sparse.issparse(X_train):
             train_dataloader = DataLoader(
@@ -221,6 +223,9 @@ def create_dataloaders(
                 drop_last=drop_last,
                 pin_memory=pin_memory,
             )
+            
+        for i, (X,y) in train_dataloader:
+            print((X,y))
     else:
         print("in create_dataloaders w_train is not None")
 
@@ -293,8 +298,7 @@ def create_dataloaders(
                     )
                 )
         
-    for i, (X,y) in train_dataloader:
-        print((X,y))
+
     return train_dataloader, valid_dataloaders
 
 
