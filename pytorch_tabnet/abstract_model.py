@@ -228,7 +228,7 @@ class TabModel(BaseEstimator):
 
         # Validate and reformat eval set depending on training data
         eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
-        if w_train == None:
+        if w_train is None:
             train_dataloader, valid_dataloaders = self._construct_loaders(
                 X_train, y_train, eval_set
             )
@@ -493,7 +493,7 @@ class TabModel(BaseEstimator):
                            total=len(train_loader))
 
         for batch_idx, (X, y, w) in progressBar:
-            if w == None:
+            if w is None:
                 self._callback_container.on_batch_begin(batch_idx)
 
                 batch_logs = self._train_batch(X, y)
@@ -756,7 +756,7 @@ class TabModel(BaseEstimator):
             y_mapped = self.prepare_target(y)
             eval_set[i] = (X, y_mapped)
         #YJ: add w_train
-        if w_train == None:
+        if w_train is None:
             train_dataloader, valid_dataloaders = create_dataloaders(
                 X_train,
                 y_train_mapped,
