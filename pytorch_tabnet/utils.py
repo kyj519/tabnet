@@ -293,7 +293,8 @@ def create_dataloaders(
                     )
                 )
         
-
+    for i, (X,y) in train_dataloader:
+        print((X,y))
     return train_dataloader, valid_dataloaders
 
 
