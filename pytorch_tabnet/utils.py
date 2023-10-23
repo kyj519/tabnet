@@ -198,6 +198,9 @@ def create_dataloaders(
     #YJ this weight will not used here. should set as 0
     if train_weight is None:
         print("in create_dataloaders w_train is None")
+        print(f"x_train is {X_train}")
+        print(f"y_train is {y_train}")
+
         if scipy.sparse.issparse(X_train):
             train_dataloader = DataLoader(
                 SparseTorchDataset(X_train.astype(np.float32), y_train),
