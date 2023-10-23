@@ -124,6 +124,7 @@ class TabModel(BaseEstimator):
         self,
         X_train,
         y_train,
+        w_train=None,
         eval_set=None,
         eval_name=None,
         eval_metric=None,
@@ -190,6 +191,7 @@ class TabModel(BaseEstimator):
             Whether to compute feature importance
         """
         # update model name
+        #YJ w_train
 
         self.max_epochs = max_epochs
         self.patience = patience
@@ -226,10 +228,14 @@ class TabModel(BaseEstimator):
 
         # Validate and reformat eval set depending on training data
         eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
-
-        train_dataloader, valid_dataloaders = self._construct_loaders(
-            X_train, y_train, eval_set
-        )
+        if w_train == None:
+            train_dataloader, valid_dataloaders = self._construct_loaders(
+                X_train, y_train, eval_set
+            )
+        else:
+            train_dataloader, valid_dataloaders = self._construct_loaders(
+                X_train, y_train, eval_set, w_train=w_train
+            )  
 
         if from_unsupervised is not None:
             # Update parameters to match self pretraining
