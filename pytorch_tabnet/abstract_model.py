@@ -771,7 +771,6 @@ class TabModel(BaseEstimator):
                 self.num_workers,
                 self.drop_last,
                 self.pin_memory,
-                train_weight=w_train
             )
         return train_dataloader, valid_dataloaders
 
