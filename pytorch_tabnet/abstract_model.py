@@ -486,19 +486,27 @@ class TabModel(BaseEstimator):
                            ascii=' =',
                            total=len(train_loader))
 
-        for batch_idx, (X, y) in progressBar:
-            self._callback_container.on_batch_begin(batch_idx)
+        for batch_idx, (X, y, w) in progressBar:
+            if w == None:
+                self._callback_container.on_batch_begin(batch_idx)
 
-            batch_logs = self._train_batch(X, y)
+                batch_logs = self._train_batch(X, y)
 
-            self._callback_container.on_batch_end(batch_idx, batch_logs)
+                self._callback_container.on_batch_end(batch_idx, batch_logs)
+            else:
+                self._callback_container.on_batch_begin(batch_idx)
+
+                batch_logs = self._train_batch(X, y, w)
+
+                self._callback_container.on_batch_end(batch_idx, batch_logs)
+                
         progressBar.close()
         epoch_logs = {"lr": self._optimizer.param_groups[-1]["lr"]}
         self.history.epoch_metrics.update(epoch_logs)
 
         return
 
-    def _train_batch(self, X, y):
+    def _train_batch(self, X, y, w = None):
         """
         Trains one batch of data
 
@@ -520,6 +528,8 @@ class TabModel(BaseEstimator):
 
         X = X.to(self.device).float()
         y = y.to(self.device).float()
+        if w != None:
+            w = w.to(self.device).float()
 
         if self.augmentations is not None:
             X, y = self.augmentations(X, y)
@@ -528,8 +538,10 @@ class TabModel(BaseEstimator):
             param.grad = None
 
         output, M_loss = self.network(X)
-
-        loss = self.compute_loss(output, y)
+        if w != None:
+            loss = self.compute_loss(output, y)
+        else:
+            loss = self.compute_loss(output, y , w)
         # Add the overall sparsity loss
         loss = loss - self.lambda_sparse * M_loss
 
@@ -712,7 +724,7 @@ class TabModel(BaseEstimator):
             self.network.parameters(), **self.optimizer_params
         )
 
-    def _construct_loaders(self, X_train, y_train, eval_set):
+    def _construct_loaders(self, X_train, y_train, eval_set, w_train = None):
         """Generate dataloaders for train and eval set.
 
         Parameters
@@ -737,17 +749,30 @@ class TabModel(BaseEstimator):
         for i, (X, y) in enumerate(eval_set):
             y_mapped = self.prepare_target(y)
             eval_set[i] = (X, y_mapped)
-
-        train_dataloader, valid_dataloaders = create_dataloaders(
-            X_train,
-            y_train_mapped,
-            eval_set,
-            self.updated_weights,
-            self.batch_size,
-            self.num_workers,
-            self.drop_last,
-            self.pin_memory,
-        )
+        #YJ: add w_train
+        if w_train == None:
+            train_dataloader, valid_dataloaders = create_dataloaders(
+                X_train,
+                y_train_mapped,
+                eval_set,
+                self.updated_weights,
+                self.batch_size,
+                self.num_workers,
+                self.drop_last,
+                self.pin_memory,
+            )
+        else:
+                train_dataloader, valid_dataloaders = create_dataloaders(
+                X_train,
+                y_train_mapped,
+                eval_set,
+                self.updated_weights,
+                self.batch_size,
+                self.num_workers,
+                self.drop_last,
+                self.pin_memory,
+                train_weight=w_train
+            )
         return train_dataloader, valid_dataloaders
 
     def _compute_feature_importances(self, X):
@@ -789,7 +814,7 @@ class TabModel(BaseEstimator):
         )
 
     @abstractmethod
-    def compute_loss(self, y_score, y_true):
+    def compute_loss(self, y_score, y_true, y_w=None):
         """
         Compute the loss.
 
@@ -799,6 +824,7 @@ class TabModel(BaseEstimator):
             Score matrix
         y_true : a :tensor: `torch.Tensor`
             Target matrix
+        #YJ: add loss to calculate loss
 
         Returns
         -------

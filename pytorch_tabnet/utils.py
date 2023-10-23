@@ -20,17 +20,23 @@ class TorchDataset(Dataset):
     y : 2D array
         The one-hot encoded target
     """
+    #YJ: modified
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, w=None):
         self.x = x
         self.y = y
+        self.w = w
 
     def __len__(self):
         return len(self.x)
 
     def __getitem__(self, index):
-        x, y = self.x[index], self.y[index]
-        return x, y
+        if self.w == None:
+            x, y = self.x[index], self.y[index]
+            return x, y, None
+        else:
+            x,y,w = self.x[index], self.y[index], self.w[index] 
+            return x, y, w
 
 
 class SparseTorchDataset(Dataset):
@@ -150,8 +156,10 @@ def create_sampler(weights, y_train):
 
 
 def create_dataloaders(
-    X_train, y_train, eval_set, weights, batch_size, num_workers, drop_last, pin_memory
+    X_train, y_train, eval_set, weights, batch_size, num_workers, drop_last, pin_memory, train_weight = None
 ):
+    #YJ: add evt weight set here
+    
     """
     Create dataloaders with or without subsampling depending on weights and balanced.
 
@@ -187,50 +195,97 @@ def create_dataloaders(
         Training and validation dataloaders
     """
     need_shuffle, sampler = create_sampler(weights, y_train)
-
-    if scipy.sparse.issparse(X_train):
-        train_dataloader = DataLoader(
-            SparseTorchDataset(X_train.astype(np.float32), y_train),
-            batch_size=batch_size,
-            sampler=sampler,
-            shuffle=need_shuffle,
-            num_workers=num_workers,
-            drop_last=drop_last,
-            pin_memory=pin_memory,
-        )
-    else:
-        train_dataloader = DataLoader(
-            TorchDataset(X_train.astype(np.float32), y_train),
-            batch_size=batch_size,
-            sampler=sampler,
-            shuffle=need_shuffle,
-            num_workers=num_workers,
-            drop_last=drop_last,
-            pin_memory=pin_memory,
-        )
-
-    valid_dataloaders = []
-    for X, y in eval_set:
-        if scipy.sparse.issparse(X):
-            valid_dataloaders.append(
-                DataLoader(
-                    SparseTorchDataset(X.astype(np.float32), y),
-                    batch_size=batch_size,
-                    shuffle=False,
-                    num_workers=num_workers,
-                    pin_memory=pin_memory,
-                )
+    #YJ this weight will not used here. should set as 0
+    if train_weight != None:
+        if scipy.sparse.issparse(X_train):
+            train_dataloader = DataLoader(
+                SparseTorchDataset(X_train.astype(np.float32), y_train, train_weight),
+                batch_size=batch_size,
+                sampler=sampler,
+                shuffle=need_shuffle,
+                num_workers=num_workers,
+                drop_last=drop_last,
+                pin_memory=pin_memory,
             )
         else:
-            valid_dataloaders.append(
-                DataLoader(
-                    TorchDataset(X.astype(np.float32), y),
-                    batch_size=batch_size,
-                    shuffle=False,
-                    num_workers=num_workers,
-                    pin_memory=pin_memory,
-                )
+            train_dataloader = DataLoader(
+                TorchDataset(X_train.astype(np.float32), y_train, train_weight),
+                batch_size=batch_size,
+                sampler=sampler,
+                shuffle=need_shuffle,
+                num_workers=num_workers,
+                drop_last=drop_last,
+                pin_memory=pin_memory,
             )
+    else:
+        if scipy.sparse.issparse(X_train):
+            train_dataloader = DataLoader(
+                SparseTorchDataset(X_train.astype(np.float32), y_train, train_weight),
+                batch_size=batch_size,
+                sampler=sampler,
+                shuffle=need_shuffle,
+                num_workers=num_workers,
+                drop_last=drop_last,
+                pin_memory=pin_memory,
+            )
+        else:
+            train_dataloader = DataLoader(
+                TorchDataset(X_train.astype(np.float32), y_train, train_weight),
+                batch_size=batch_size,
+                sampler=sampler,
+                shuffle=need_shuffle,
+                num_workers=num_workers,
+                drop_last=drop_last,
+                pin_memory=pin_memory,
+            )
+
+    valid_dataloaders = []
+    if len(eval_set[0]) == 2:
+        #is validation set doesn't have weight inside it
+        for X, y in eval_set:
+            if scipy.sparse.issparse(X):
+                valid_dataloaders.append(
+                    DataLoader(
+                        SparseTorchDataset(X.astype(np.float32), y),
+                        batch_size=batch_size,
+                        shuffle=False,
+                        num_workers=num_workers,
+                        pin_memory=pin_memory,
+                    )
+                )
+            else:
+                valid_dataloaders.append(
+                    DataLoader(
+                        TorchDataset(X.astype(np.float32), y),
+                        batch_size=batch_size,
+                        shuffle=False,
+                        num_workers=num_workers,
+                        pin_memory=pin_memory,
+                    )
+                )
+    elif len(eval_set[0]) == 3:
+        for X, y, w in eval_set:
+            if scipy.sparse.issparse(X):
+                valid_dataloaders.append(
+                    DataLoader(
+                        SparseTorchDataset(X.astype(np.float32), y, w),
+                        batch_size=batch_size,
+                        shuffle=False,
+                        num_workers=num_workers,
+                        pin_memory=pin_memory,
+                    )
+                )
+            else:
+                valid_dataloaders.append(
+                    DataLoader(
+                        TorchDataset(X.astype(np.float32), y, w),
+                        batch_size=batch_size,
+                        shuffle=False,
+                        num_workers=num_workers,
+                        pin_memory=pin_memory,
+                    )
+                )
+        
 
     return train_dataloader, valid_dataloaders
 
