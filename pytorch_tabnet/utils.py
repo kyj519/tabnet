@@ -202,16 +202,16 @@ def create_dataloaders(
         print(f"y_train is {y_train}")
         print(f"x_train is {type(X_train)}")
         print(f"y_train is {type(y_train)}")    
-        indices_with_none = np.where(X_train == None)[0]
+        indices_with_none = np.where(X_train == None)
 
-        if len(indices_with_none) > 0:
+        if np.sum(indices_with_none) > 0:
             print("Indices with None:", indices_with_none)
         else:
             print("No None values found in the ndarray.")
 
         indices_with_none = np.where(y_train == None)[0]
 
-        if len(indices_with_none) > 0:
+        if np.sum(indices_with_none) > 0:
             print("Indices with None:", indices_with_none)
         else:
             print("No None values found in the ndarray.")
