@@ -488,6 +488,7 @@ class TabModel(BaseEstimator):
             DataLoader with train set
         """
         self.network.train()
+        print(train_loader)
         progressBar = tqdm(enumerate(train_loader),
                            ascii=' =',
                            total=len(train_loader))
