@@ -494,15 +494,18 @@ class TabModel(BaseEstimator):
 
 
         for batch_idx, data in progressBar:
-            print(data.shape)
-            break
-            if w is None:
+            if len(data) == 2:
+                X = data[0]
+                y = data[1]
                 self._callback_container.on_batch_begin(batch_idx)
 
                 batch_logs = self._train_batch(X, y)
 
                 self._callback_container.on_batch_end(batch_idx, batch_logs)
             else:
+                X = data[0]
+                y = data[1]
+                w = data[2]
                 self._callback_container.on_batch_begin(batch_idx)
 
                 batch_logs = self._train_batch(X, y, w)
