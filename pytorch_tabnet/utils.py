@@ -217,9 +217,7 @@ def create_dataloaders(
                 drop_last=drop_last,
                 pin_memory=pin_memory,
             )
-            
-        for i, (X,y) in train_dataloader:
-            print((X,y))
+           
     else:
         print("in create_dataloaders w_train is not None")
 
