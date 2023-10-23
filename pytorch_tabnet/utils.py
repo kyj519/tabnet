@@ -31,7 +31,7 @@ class TorchDataset(Dataset):
         return len(self.x)
 
     def __getitem__(self, index):
-        if self.w == None:
+        if self.w is None:
             x, y = self.x[index], self.y[index]
             return x, y, None
         else:
