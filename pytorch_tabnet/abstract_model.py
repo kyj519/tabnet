@@ -758,6 +758,7 @@ class TabModel(BaseEstimator):
             eval_set[i] = (X, y_mapped)
         #YJ: add w_train
         if w_train is None:
+            print("in _construc_dataloader w_train is None")
             train_dataloader, valid_dataloaders = create_dataloaders(
                 X_train,
                 y_train_mapped,
