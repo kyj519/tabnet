@@ -493,6 +493,7 @@ class TabModel(BaseEstimator):
                            total=len(train_loader))
 
         for batch_idx, (X, y, w) in progressBar:
+            print(w)
             if w is None:
                 self._callback_container.on_batch_begin(batch_idx)
 
