@@ -228,6 +228,7 @@ class TabModel(BaseEstimator):
 
         # Validate and reformat eval set depending on training data
         eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
+        print(f"in fit w_train is {w_train}")
         if w_train is None:
             train_dataloader, valid_dataloaders = self._construct_loaders(
                 X_train, y_train, eval_set
@@ -493,17 +494,7 @@ class TabModel(BaseEstimator):
                            ascii=' =',
                            total=len(train_loader))
 
-        for batch in train_loader:
-            if batch is not None:
-                data, target = batch  # Assuming the batch contains data and target
 
-                # Check if data or target is None before attempting to print
-                if data is not None:
-                    print("Batch Data:")
-                    print(data)
-                if target is not None:
-                    print("Batch Target:")
-                    print(target)
         for batch_idx, (X, y) in progressBar:
             w = None
             if w is None:
