@@ -492,8 +492,8 @@ class TabModel(BaseEstimator):
                            ascii=' =',
                            total=len(train_loader))
 
-        for batch_idx, (X, y, w) in progressBar:
-            print(w)
+        for batch_idx, (X, y) in progressBar:
+            w = None
             if w is None:
                 self._callback_container.on_batch_begin(batch_idx)
 
@@ -535,7 +535,7 @@ class TabModel(BaseEstimator):
 
         X = X.to(self.device).float()
         y = y.to(self.device).float()
-        if w != None:
+        if w is not None:
             w = w.to(self.device).float()
 
         if self.augmentations is not None:
@@ -545,7 +545,7 @@ class TabModel(BaseEstimator):
             param.grad = None
 
         output, M_loss = self.network(X)
-        if w != None:
+        if w is None:
             loss = self.compute_loss(output, y)
         else:
             loss = self.compute_loss(output, y , w)
