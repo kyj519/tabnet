@@ -219,8 +219,6 @@ def create_dataloaders(
             )
            
     else:
-        print("in create_dataloaders w_train is not None")
-
         if scipy.sparse.issparse(X_train):
             train_dataloader = DataLoader(
                 SparseTorchDataset(X_train.astype(np.float32), y_train, train_weight),

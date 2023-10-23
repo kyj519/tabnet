@@ -494,7 +494,7 @@ class TabModel(BaseEstimator):
 
 
         for batch_idx, data in progressBar:
-            print(data)
+            print(data.shape)
             break
             if w is None:
                 self._callback_container.on_batch_begin(batch_idx)
