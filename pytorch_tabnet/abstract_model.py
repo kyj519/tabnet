@@ -493,6 +493,17 @@ class TabModel(BaseEstimator):
                            ascii=' =',
                            total=len(train_loader))
 
+        for batch in train_loader:
+            if batch is not None:
+                data, target = batch  # Assuming the batch contains data and target
+
+                # Check if data or target is None before attempting to print
+                if data is not None:
+                    print("Batch Data:")
+                    print(data)
+                if target is not None:
+                    print("Batch Target:")
+                    print(target)
         for batch_idx, (X, y) in progressBar:
             w = None
             if w is None:
