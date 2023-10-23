@@ -228,9 +228,7 @@ class TabModel(BaseEstimator):
 
         # Validate and reformat eval set depending on training data
         eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
-        print(f"in fit w_train is {w_train}")
         if w_train is None:
-            print("call _construct_loader with None weight set")
             train_dataloader, valid_dataloaders = self._construct_loaders(
                 X_train, y_train, eval_set
             )
@@ -490,7 +488,6 @@ class TabModel(BaseEstimator):
             DataLoader with train set
         """
         self.network.train()
-        print(train_loader)
         progressBar = tqdm(enumerate(train_loader),
                            ascii=' =',
                            total=len(train_loader))
@@ -762,7 +759,6 @@ class TabModel(BaseEstimator):
             eval_set[i] = (X, y_mapped)
         #YJ: add w_train
         if w_train is None:
-            print("in _construc_dataloader w_train is None")
             train_dataloader, valid_dataloaders = create_dataloaders(
                 X_train,
                 y_train_mapped,

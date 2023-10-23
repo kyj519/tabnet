@@ -33,7 +33,7 @@ class TorchDataset(Dataset):
     def __getitem__(self, index):
         if self.w is None:
             x, y = self.x[index], self.y[index]
-            return x, y, None
+            return x, y
         else:
             x,y,w = self.x[index], self.y[index], self.w[index] 
             return x, y, w
@@ -197,24 +197,6 @@ def create_dataloaders(
     need_shuffle, sampler = create_sampler(weights, y_train)
     #YJ this weight will not used here. should set as 0
     if train_weight is None:
-        print("in create_dataloaders w_train is None")
-        print(f"x_train is {X_train}")
-        print(f"y_train is {y_train}")
-        print(f"x_train is {type(X_train)}")
-        print(f"y_train is {type(y_train)}")    
-        indices_with_none = np.where(X_train == None)
-
-        if np.sum(indices_with_none) > 0:
-            print("Indices with None:", indices_with_none)
-        else:
-            print("No None values found in the ndarray.")
-
-        indices_with_none = np.where(y_train == None)[0]
-
-        if np.sum(indices_with_none) > 0:
-            print("Indices with None:", indices_with_none)
-        else:
-            print("No None values found in the ndarray.")
         if scipy.sparse.issparse(X_train):
             train_dataloader = DataLoader(
                 SparseTorchDataset(X_train.astype(np.float32), y_train),
@@ -264,7 +246,6 @@ def create_dataloaders(
 
     valid_dataloaders = []
     if len(eval_set[0]) == 2:
-        print("eval set has shape of 2")
         #is validation set doesn't have weight inside it
         for X, y in eval_set:
             if scipy.sparse.issparse(X):
