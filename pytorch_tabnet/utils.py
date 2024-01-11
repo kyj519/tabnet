@@ -51,17 +51,22 @@ class SparseTorchDataset(Dataset):
         The one-hot encoded target
     """
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, w=None):
         self.x = x
         self.y = y
-
+        self.w = w
     def __len__(self):
         return self.x.shape[0]
 
     def __getitem__(self, index):
-        x = torch.from_numpy(self.x[index].toarray()[0]).float()
-        y = self.y[index]
-        return x, y
+        if self.w is None:
+            x = torch.from_numpy(self.x[index].toarray()[0]).float()
+            y = self.y[index]
+            return x, y
+        else:
+            x = torch.from_numpy(self.x[index].toarray()[0]).float()
+            y = self.y[index]
+            return x, y, w
 
 
 class PredictDataset(Dataset):
