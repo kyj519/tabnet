@@ -759,7 +759,7 @@ class TabModel(BaseEstimator):
         """
         # all weights are not allowed for this type of model
         y_train_mapped = self.prepare_target(y_train)
-        if len(eval_set) == 2:
+        if len(eval_set[0]) == 2:
             for i, (X, y) in enumerate(eval_set):
                 y_mapped = self.prepare_target(y)
                 eval_set[i] = (X, y_mapped)
