@@ -592,9 +592,12 @@ class TabModel(BaseEstimator):
                 list_y_score.append(scores)
                 list_y_w.append(w)
                 
-            print("weights for valid set is available.")
             y_true, scores, y_w = self.stack_batches(list_y_true, list_y_score, list_y_w)
             metrics_logs = self._metric_container_dict[name](y_true, scores, y_w)
+            
+            self.network.train()
+            self.history.epoch_metrics.update(metrics_logs)
+            return
             
         except:
             print("No validation set weight.")
@@ -605,9 +608,9 @@ class TabModel(BaseEstimator):
             y_true, scores = self.stack_batches(list_y_true, list_y_score)
             metrics_logs = self._metric_container_dict[name](y_true, scores)
             
-        self.network.train()
-        self.history.epoch_metrics.update(metrics_logs)
-        return
+            self.network.train()
+            self.history.epoch_metrics.update(metrics_logs)
+            return
 
     def _predict_batch(self, X):
         """
@@ -776,8 +779,7 @@ class TabModel(BaseEstimator):
                 eval_set[i] = (X, y_mapped)
         else:
             for i, (X, y, w) in enumerate(eval_set):
-                y_mapped = self.prepare_target(y)
-                w = np.vectorize(w)
+                y_mapped = self.prepare_target(y) 
                 eval_set[i] = (X, y_mapped, w)   
         #YJ: add w_train
         if w_train is None:
