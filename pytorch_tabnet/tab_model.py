@@ -74,7 +74,7 @@ class TabNetClassifier(TabModel):
         if list_y_w is not None:
             y_w = np.hstack(list_y_w)
             return y_true, y_score, y_w
-        return y_true, y_score, y_w
+        return y_true, y_score
 
     def predict_func(self, outputs):
         outputs = np.argmax(outputs, axis=1)
