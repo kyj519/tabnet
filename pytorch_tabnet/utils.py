@@ -483,39 +483,72 @@ def validate_eval_set(eval_set, eval_name, X_train, y_train):
     ), "eval_set and eval_name have not the same length"
     if len(eval_set) > 0:
         assert all(
-            len(elem) == 2 for elem in eval_set
-        ), "Each tuple of eval_set need to have two elements"
-    for name, (X, y) in zip(eval_name, eval_set):
-        check_input(X)
-        msg = (
-            f"Dimension mismatch between X_{name} "
-            + f"{X.shape} and X_train {X_train.shape}"
-        )
-        assert len(X.shape) == len(X_train.shape), msg
-
-        msg = (
-            f"Dimension mismatch between y_{name} "
-            + f"{y.shape} and y_train {y_train.shape}"
-        )
-        assert len(y.shape) == len(y_train.shape), msg
-
-        msg = (
-            f"Number of columns is different between X_{name} "
-            + f"({X.shape[1]}) and X_train ({X_train.shape[1]})"
-        )
-        assert X.shape[1] == X_train.shape[1], msg
-
-        if len(y_train.shape) == 2:
+            len(elem) == 2 or len(elem) ==3 for elem in eval_set
+        ), "Each tuple of eval_set need to have two or three elements"
+    if len(eval_set[0]) == 3:
+        for name, (X, y, w) in zip(eval_name, eval_set):
+            check_input(X)
             msg = (
-                f"Number of columns is different between y_{name} "
-                + f"({y.shape[1]}) and y_train ({y_train.shape[1]})"
+                f"Dimension mismatch between X_{name} "
+                + f"{X.shape} and X_train {X_train.shape}"
             )
-            assert y.shape[1] == y_train.shape[1], msg
-        msg = (
-            f"You need the same number of rows between X_{name} "
-            + f"({X.shape[0]}) and y_{name} ({y.shape[0]})"
-        )
-        assert X.shape[0] == y.shape[0], msg
+            assert len(X.shape) == len(X_train.shape), msg
+
+            msg = (
+                f"Dimension mismatch between y_{name} "
+                + f"{y.shape} and y_train {y_train.shape}"
+            )
+            assert len(y.shape) == len(y_train.shape), msg
+
+            msg = (
+                f"Number of columns is different between X_{name} "
+                + f"({X.shape[1]}) and X_train ({X_train.shape[1]})"
+            )
+            assert X.shape[1] == X_train.shape[1], msg
+
+            if len(y_train.shape) == 2:
+                msg = (
+                    f"Number of columns is different between y_{name} "
+                    + f"({y.shape[1]}) and y_train ({y_train.shape[1]})"
+                )
+                assert y.shape[1] == y_train.shape[1], msg
+            msg = (
+                f"You need the same number of rows between X_{name} "
+                + f"({X.shape[0]}) and y_{name} ({y.shape[0]})"
+            )
+            assert X.shape[0] == y.shape[0], msg
+    else:
+        for name, (X, y) in zip(eval_name, eval_set):
+            check_input(X)
+            msg = (
+                f"Dimension mismatch between X_{name} "
+                + f"{X.shape} and X_train {X_train.shape}"
+            )
+            assert len(X.shape) == len(X_train.shape), msg
+
+            msg = (
+                f"Dimension mismatch between y_{name} "
+                + f"{y.shape} and y_train {y_train.shape}"
+            )
+            assert len(y.shape) == len(y_train.shape), msg
+
+            msg = (
+                f"Number of columns is different between X_{name} "
+                + f"({X.shape[1]}) and X_train ({X_train.shape[1]})"
+            )
+            assert X.shape[1] == X_train.shape[1], msg
+
+            if len(y_train.shape) == 2:
+                msg = (
+                    f"Number of columns is different between y_{name} "
+                    + f"({y.shape[1]}) and y_train ({y_train.shape[1]})"
+                )
+                assert y.shape[1] == y_train.shape[1], msg
+            msg = (
+                f"You need the same number of rows between X_{name} "
+                + f"({X.shape[0]}) and y_{name} ({y.shape[0]})"
+            )
+            assert X.shape[0] == y.shape[0], msg
 
     return eval_name, eval_set
 

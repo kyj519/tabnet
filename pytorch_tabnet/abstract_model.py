@@ -227,7 +227,7 @@ class TabModel(BaseEstimator):
         )
 
         # Validate and reformat eval set depending on training data
-        # eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
+        eval_names, eval_set = validate_eval_set(eval_set, eval_name, X_train, y_train)
         if w_train is None:
             train_dataloader, valid_dataloaders = self._construct_loaders(
                 X_train, y_train, eval_set
