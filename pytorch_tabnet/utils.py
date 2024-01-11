@@ -266,7 +266,7 @@ def create_dataloaders(
                     )
                 )
     elif len(eval_set[0]) == 3:
-        print("eval set has weights: create valid_dataloaders with dimension of 3(X, y, w)")
+        print("eval set has weights: create valid_dataloaders with dimension of 3 (X, y, w)")
         for X, y, w in eval_set:
             if scipy.sparse.issparse(X):
                 valid_dataloaders.append(

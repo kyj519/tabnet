@@ -585,7 +585,7 @@ class TabModel(BaseEstimator):
         list_y_score = []
 
         # Main loop 
-        print(loader[0])
+        print(loader.shape())
         for batch_idx, (X, y) in enumerate(loader):
             scores = self._predict_batch(X)
             list_y_true.append(y)
