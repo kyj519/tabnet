@@ -67,11 +67,14 @@ class TabNetClassifier(TabModel):
         }
         self.updated_weights = self.weight_updater(weights)
 
-    def stack_batches(self, list_y_true, list_y_score):
+    def stack_batches(self, list_y_true, list_y_score, list_y_w=None):
         y_true = np.hstack(list_y_true)
         y_score = np.vstack(list_y_score)
         y_score = softmax(y_score, axis=1)
-        return y_true, y_score
+        if list_y_w is not None:
+            y_w = np.hstack(list_y_w)
+            return y_true, y_score, y_w
+        return y_true, y_score, y_w
 
     def predict_func(self, outputs):
         outputs = np.argmax(outputs, axis=1)

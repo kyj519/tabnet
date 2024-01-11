@@ -583,19 +583,25 @@ class TabModel(BaseEstimator):
 
         list_y_true = []
         list_y_score = []
-
+        list_y_w = []
         # Main loop 
         try:
             for batch_idx, (X, y, w) in enumerate(loader):
                 scores = self._predict_batch(X)
                 list_y_true.append(y)
                 list_y_score.append(scores)
-                print("weights for valid set is available.")
+                list_y_w.append(w)
+                
+            print("weights for valid set is available.")
+            y_true, scores, y_w = self.stack_batches(list_y_true, list_y_score, list_y_w)
+            metrics_logs = self._metric_container_dict[name](y_true, scores, y_w)
         except:
             for batch_idx, (X, y) in enumerate(loader):
                 scores = self._predict_batch(X)
                 list_y_true.append(y)
                 list_y_score.append(scores)
+            y_true, scores = self.stack_batches(list_y_true, list_y_score)
+            metrics_logs = self._metric_container_dict[name](y_true, scores)
                 
         y_true, scores = self.stack_batches(list_y_true, list_y_score)
         metrics_logs = self._metric_container_dict[name](y_true, scores)
