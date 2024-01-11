@@ -604,9 +604,6 @@ class TabModel(BaseEstimator):
                 list_y_score.append(scores)
             y_true, scores = self.stack_batches(list_y_true, list_y_score)
             metrics_logs = self._metric_container_dict[name](y_true, scores)
-                
-        y_true, scores = self.stack_batches(list_y_true, list_y_score)
-        metrics_logs = self._metric_container_dict[name](y_true, scores)
             
         self.network.train()
         self.history.epoch_metrics.update(metrics_logs)
