@@ -54,10 +54,10 @@ class TabNetClassifier(TabModel):
         weights,
     ):
         output_dim, train_labels = infer_output_dim(y_train)
-        if len(eval_set[0] == 3):
+        if len(eval_set[0]) == 3:
             for X, y, w in eval_set:
                 check_output_dim(train_labels, y)
-        elif len(eval_set[0] == 2):
+        elif len(eval_set[0]) == 2:
             for X, y in eval_set:
                 check_output_dim(train_labels, y)
             
