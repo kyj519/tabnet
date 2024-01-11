@@ -138,7 +138,7 @@ class MetricContainer:
         self.metrics = Metric.get_metrics_by_names(self.metric_names)
         self.names = [self.prefix + name for name in self.metric_names]
 
-    def __call__(self, y_true, y_pred):
+    def __call__(self, y_true, y_pred, y_w = None):
         """Compute all metrics and store into a dict.
 
         Parameters
@@ -155,19 +155,30 @@ class MetricContainer:
 
         """
         logs = {}
-        for metric in self.metrics:
-            if isinstance(y_pred, list):
-                res = np.mean(
-                    [metric(y_true[:, i], y_pred[i]) for i in range(len(y_pred))]
-                )
-            else:
-                res = metric(y_true, y_pred)
-            logs[self.prefix + metric._name] = res
+        if y_w is not None:
+            for metric in self.metrics:
+                if isinstance(y_pred, list):
+                    res = np.mean(
+                        [metric(y_true[:, i], y_pred[i], y_w[i]) for i in range(len(y_pred))]
+                    )
+                else:
+                    res = metric(y_true, y_pred, y_w)
+                logs[self.prefix + metric._name] = res
+                
+        else:
+            for metric in self.metrics:
+                if isinstance(y_pred, list):
+                    res = np.mean(
+                        [metric(y_true[:, i], y_pred[i]) for i in range(len(y_pred))]
+                    )
+                else:
+                    res = metric(y_true, y_pred)
+                logs[self.prefix + metric._name] = res
         return logs
 
 
 class Metric:
-    def __call__(self, y_true, y_pred):
+    def __call__(self, y_true, y_pred, y_w = None):
         raise NotImplementedError("Custom Metrics must implement this function")
 
     @classmethod

@@ -595,6 +595,7 @@ class TabModel(BaseEstimator):
             print("weights for valid set is available.")
             y_true, scores, y_w = self.stack_batches(list_y_true, list_y_score, list_y_w)
             metrics_logs = self._metric_container_dict[name](y_true, scores, y_w)
+            
         except:
             print("No validation set weight.")
             for batch_idx, (X, y) in enumerate(loader):
