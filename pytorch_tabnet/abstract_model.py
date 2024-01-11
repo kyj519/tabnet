@@ -779,7 +779,7 @@ class TabModel(BaseEstimator):
         else:
             for i, (X, y, w) in enumerate(eval_set):
                 y_mapped = self.prepare_target(y)
-                eval_set[i] = (X, y_mapped)   
+                eval_set[i] = (X, y_mapped, w)   
         #YJ: add w_train
         if w_train is None:
             train_dataloader, valid_dataloaders = create_dataloaders(
