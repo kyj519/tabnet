@@ -584,15 +584,16 @@ class TabModel(BaseEstimator):
         list_y_true = []
         list_y_score = []
 
-        # Main loop
+        # Main loop 
+        print(loader[0])
         for batch_idx, (X, y) in enumerate(loader):
             scores = self._predict_batch(X)
             list_y_true.append(y)
             list_y_score.append(scores)
-
+            
         y_true, scores = self.stack_batches(list_y_true, list_y_score)
-
         metrics_logs = self._metric_container_dict[name](y_true, scores)
+            
         self.network.train()
         self.history.epoch_metrics.update(metrics_logs)
         return
@@ -746,7 +747,7 @@ class TabModel(BaseEstimator):
         y_train : np.array
             Train targets.
         eval_set : list of tuple
-            List of eval tuple set (X, y).
+            List of eval tuple set (X, y, w).
 
         Returns
         -------
@@ -758,9 +759,14 @@ class TabModel(BaseEstimator):
         """
         # all weights are not allowed for this type of model
         y_train_mapped = self.prepare_target(y_train)
-        for i, (X, y) in enumerate(eval_set):
-            y_mapped = self.prepare_target(y)
-            eval_set[i] = (X, y_mapped)
+        if len(eval_set) == 2:
+            for i, (X, y) in enumerate(eval_set):
+                y_mapped = self.prepare_target(y)
+                eval_set[i] = (X, y_mapped)
+        else:
+            for i, (X, y, w) in enumerate(eval_set):
+                y_mapped = self.prepare_target(y)
+                eval_set[i] = (X, y_mapped)   
         #YJ: add w_train
         if w_train is None:
             train_dataloader, valid_dataloaders = create_dataloaders(

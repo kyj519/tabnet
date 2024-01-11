@@ -171,6 +171,7 @@ def create_dataloaders(
         Mapped Training targets
     eval_set : list of tuple
         List of eval tuple set (X, y)
+        #YJ: for our case, (X, y, w)
     weights : either 0, 1, dict or iterable
         if 0 (default) : no weights will be applied
         if 1 : classification only, will balanced class with inverse frequency
@@ -265,6 +266,7 @@ def create_dataloaders(
                     )
                 )
     elif len(eval_set[0]) == 3:
+        print("eval set has weights: create valid_dataloaders with dimension of 3(X, y, w)")
         for X, y, w in eval_set:
             if scipy.sparse.issparse(X):
                 valid_dataloaders.append(
