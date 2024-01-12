@@ -585,32 +585,32 @@ class TabModel(BaseEstimator):
         list_y_score = []
         list_y_w = []
         # Main loop 
-        try:
-            for batch_idx, (X, y, w) in enumerate(loader):
-                scores = self._predict_batch(X)
-                list_y_true.append(y)
-                list_y_score.append(scores)
-                list_y_w.append(w)
-                
-            y_true, scores, y_w = self.stack_batches(list_y_true, list_y_score, list_y_w)
-            metrics_logs = self._metric_container_dict[name](y_true, scores, y_w)
+
+        for batch_idx, (X, y, w) in enumerate(loader):
+            scores = self._predict_batch(X)
+            list_y_true.append(y)
+            list_y_score.append(scores)
+            list_y_w.append(w)
             
-            self.network.train()
-            self.history.epoch_metrics.update(metrics_logs)
-            return
+        y_true, scores, y_w = self.stack_batches(list_y_true, list_y_score, list_y_w)
+        metrics_logs = self._metric_container_dict[name](y_true, scores, y_w)
+        
+        self.network.train()
+        self.history.epoch_metrics.update(metrics_logs)
+        return
             
-        except:
-            print("No validation set weight.")
-            for batch_idx, (X, y) in enumerate(loader):
-                scores = self._predict_batch(X)
-                list_y_true.append(y)
-                list_y_score.append(scores)
-            y_true, scores = self.stack_batches(list_y_true, list_y_score)
-            metrics_logs = self._metric_container_dict[name](y_true, scores)
+        # except:
+        #     print("No validation set weight.")
+        #     for batch_idx, (X, y) in enumerate(loader):
+        #         scores = self._predict_batch(X)
+        #         list_y_true.append(y)
+        #         list_y_score.append(scores)
+        #     y_true, scores = self.stack_batches(list_y_true, list_y_score)
+        #     metrics_logs = self._metric_container_dict[name](y_true, scores)
             
-            self.network.train()
-            self.history.epoch_metrics.update(metrics_logs)
-            return
+        #     self.network.train()
+        #     self.history.epoch_metrics.update(metrics_logs)
+        #     return
 
     def _predict_batch(self, X):
         """
