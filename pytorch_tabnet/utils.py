@@ -257,7 +257,7 @@ def create_dataloaders(
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=num_workers,
-                        pin_memory=pin_memory,
+                        pin_memory=False,
                     )
                 )
             else:
@@ -267,7 +267,7 @@ def create_dataloaders(
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=num_workers,
-                        pin_memory=pin_memory,
+                        pin_memory=False,
                     )
                 )
     elif len(eval_set[0]) == 3:
@@ -280,7 +280,7 @@ def create_dataloaders(
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=num_workers,
-                        pin_memory=pin_memory,
+                        pin_memory=False,
                     )
                 )
             else:
@@ -290,7 +290,7 @@ def create_dataloaders(
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=num_workers,
-                        pin_memory=pin_memory,
+                        pin_memory=False,
                     )
                 )
         
