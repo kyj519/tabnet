@@ -397,7 +397,7 @@ class TabModel(BaseEstimator):
 
         ##freezing
         for name, param in self.network.named_parameters():
-            if 'initial' in param or 'feat_transformers.0' in param or 'att_transformers.0' in param:
+            if 'initial' in name or 'feat_transformers.0' in name or 'att_transformers.0' in name:
                 print(f"parameter {name} will be freezed during training")
                 param.requires_grad = False
             
