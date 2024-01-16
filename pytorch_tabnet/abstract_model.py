@@ -395,6 +395,12 @@ class TabModel(BaseEstimator):
 
         self.network.load_state_dict(update_state_dict)
 
+        ##freezing
+        for param, weights in self.network.state_dict().items():
+            if 'initial' in param or 'feat_transformers.0' in param or 'att_transformers.0' in param:
+                param.requires_grad = False
+            
+
     def load_class_attrs(self, class_attrs):
         for attr_name, attr_value in class_attrs.items():
             setattr(self, attr_name, attr_value)
