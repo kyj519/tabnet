@@ -396,8 +396,9 @@ class TabModel(BaseEstimator):
         self.network.load_state_dict(update_state_dict)
 
         ##freezing
-        for param, weights in self.network.state_dict().items():
+        for name, param in self.network.named_parameters():
             if 'initial' in param or 'feat_transformers.0' in param or 'att_transformers.0' in param:
+                print(f"parameter {name} will be freezed during training")
                 param.requires_grad = False
             
 
